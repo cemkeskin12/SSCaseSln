@@ -10,6 +10,7 @@ var setPriceFormat = new SetPriceFormat();
 var itemList = new List<Item>();
 var priceList = new List<int>();
 
+#region All show case lists.
 
 //find nodes in div class = uiBox showcase inside ul/li
 HtmlNodeCollection nodeCollection = showCaseRequest.UrlConnection().DocumentNode.SelectNodes(@"//div[@class=""uiBox showcase""]/ul/li");
@@ -32,9 +33,13 @@ foreach (var item in itemList)
     if (item.Name != null)
         Console.WriteLine(item.Id + ":" + item.Name.Trim());
 
+#endregion
+
+
 Console.Write("Please select an item for details or enter ['-1'] for average all product prices: ");
 var selectedItem = Convert.ToInt32(Console.ReadLine());
 
+#region List all prices and calculate averages
 //an item selected in Item list. If selected value "-1", the program will list all showcase prices and its averaging.
 if (selectedItem == -1)
 {
@@ -59,9 +64,7 @@ if (selectedItem == -1)
                         Task.Delay(10000).Wait();
                         
                     }
-
                 }
-
             }
             //calculate all prices average.
             AveragePrice averagePriceCalculator = new AveragePrice();
@@ -69,11 +72,15 @@ if (selectedItem == -1)
             break;
     }
 }
+#endregion
+
 
 //select an item in Item list by selected value
 var firstItem = itemList.ElementAt(selectedItem - 1);
 Console.WriteLine(firstItem.Name.Trim());
 
+
+#region List all details by selected items.
 
 //Get all details selected item's detail url.
 HtmlNodeCollection nodeCollectionForPriceDetail = detailRequest.DetailConnection(firstItem.DetailUrl).DocumentNode.SelectNodes(@"//div[@class=""classifiedInfo ""]");
@@ -97,6 +104,7 @@ if (nodeCollectionForPriceDetail != null)
     }
 }
 
+#endregion
 
 
 
