@@ -8,22 +8,32 @@ namespace SSCases.Requests
     {
         public HtmlDocument DetailConnection(string selectedItem)
         {
-            Uri detailUrl = new Uri(RequestHeader.BaseUrl + selectedItem);
-            WebClient client = new();
+            try
+            {
 
-            //client headers added because if you dont use headers, the page will see it as a robot.
-            client.Headers.Add("User-Agent", RequestHeader.UserAgent);
-            client.Headers.Add("Accept", RequestHeader.Accept);
-            client.Headers.Add("Cookie", RequestHeader.Cookie);
-            client.Headers.Add("Accept-Language", RequestHeader.AcceptLanguage);
 
-            //download all html text
-            string html = client.DownloadString(detailUrl);
-            HtmlDocument document = new();
-            document.LoadHtml(html);
+                Uri detailUrl = new Uri(RequestHeader.BaseUrl + selectedItem);
+                WebClient client = new();
 
-            //return html values
-            return document;
+                //client headers added because if you dont use headers, the page will see it as a robot.
+                client.Headers.Add("User-Agent", RequestHeader.UserAgent);
+                client.Headers.Add("Accept", RequestHeader.Accept);
+                client.Headers.Add("Cookie", RequestHeader.Cookie);
+                client.Headers.Add("Accept-Language", RequestHeader.AcceptLanguage);
+
+                //download all html text
+                string html = client.DownloadString(detailUrl);
+                HtmlDocument document = new();
+                document.LoadHtml(html);
+
+                //return html values
+                return document;
+            }
+
+            catch (Exception)
+            {
+                throw new Exception($"An error occurred while connecting to the server. Please try later");
+            }
         }
     }
 }

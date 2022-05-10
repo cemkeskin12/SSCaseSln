@@ -13,6 +13,7 @@ var priceList = new List<int>();
 #region All show case lists.
 
 //find nodes in div class = uiBox showcase inside ul/li
+
 HtmlNodeCollection nodeCollection = showCaseRequest.UrlConnection().DocumentNode.SelectNodes(@"//div[@class=""uiBox showcase""]/ul/li");
 int i = 1;
 foreach (var nodes in nodeCollection)
@@ -47,35 +48,45 @@ if (selectedItem == -1)
     {
         //when the value is -1
         case "-1":
-            foreach (var urls in itemList)
+            //I'm listing the first 10 because the server is banned.
+            for (int y = 0; y < 10; y++)
             {
-                //all urls in Item List
-                HtmlNodeCollection nodeCollectionForPriceAverages = detailRequest.DetailConnection(urls.DetailUrl).DocumentNode.SelectNodes(@"//div[@class=""classifiedInfo ""]/h3");
+                HtmlNodeCollection nodeCollectionForPriceAverages = detailRequest.DetailConnection(itemList[y].DetailUrl).DocumentNode.SelectNodes(@"//div[@class=""classifiedInfo ""]/h3");
                 if (nodeCollectionForPriceAverages != null)
                 {
                     foreach (var details in nodeCollectionForPriceAverages)
                     {
-
+                        int intPrice = 0;
                         var price = details.InnerHtml.Trim();
                         var newPrice = setPriceFormat.SetPrice(price);
                         Console.WriteLine($"Fiyat : {newPrice} TL");
-                        //it will add the prices kind of int.
-                        priceList.Add(Convert.ToInt32(price));
-                        Task.Delay(10000).Wait();
-                        
+                        //checks if the price in the showcase is in dollars.
+                        var successed = Int32.TryParse(newPrice, out intPrice);
+                        if (successed)
+                        {
+                            priceList.Add(intPrice);
+
+                        }
+                        Task.Delay(1000).Wait();
+
                     }
                 }
             }
-            //calculate all prices average.
             AveragePrice averagePriceCalculator = new AveragePrice();
             averagePriceCalculator.Calculate($"Average Price : {priceList.Average()}");
             break;
     }
+
 }
 #endregion
 
 
 //select an item in Item list by selected value
+if (selectedItem == -1)
+{
+    goto endProject;
+    
+}
 var firstItem = itemList.ElementAt(selectedItem - 1);
 Console.WriteLine(firstItem.Name.Trim());
 
@@ -97,8 +108,11 @@ if (nodeCollectionForPriceDetail != null)
         {
             foreach (var item in allDetails)
             {
-                var deneme = item.Attributes[""];
-                Console.WriteLine(item.ChildNodes["strong"].InnerText.Trim() + item.ChildNodes["span"].InnerText.Trim());
+                if(item.ChildNodes["strong"] != null)
+                {
+                    Console.WriteLine(item.ChildNodes["strong"].InnerText.Trim() + item.ChildNodes["span"].InnerText.Trim());
+
+                }
             }
         }
     }
@@ -106,6 +120,6 @@ if (nodeCollectionForPriceDetail != null)
 
 #endregion
 
-
+endProject:
 
 Console.ReadKey();

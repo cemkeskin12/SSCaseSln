@@ -15,8 +15,10 @@ namespace SSCases.Services
             {
                 price = price.Substring(0, a);
                 price = price.Replace(".", "");
+                return price;
+
             }
-            return price;
+            return "0";
         }
     }
 }
